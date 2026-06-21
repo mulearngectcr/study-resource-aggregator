@@ -27,7 +27,8 @@ def fetch_youtube_videos(topic):
     }
 
     try:
-        response = requests.get(url, params=params)
+        # ADDED: timeout=5 prevents the app from hanging if YouTube servers lag
+        response = requests.get(url, params=params, timeout=5)
         if response.status_code == 200:
             data = response.json()
             video_list = []
@@ -43,6 +44,11 @@ def fetch_youtube_videos(topic):
         else:
             print(f"⚠️ YouTube API Error: Status {response.status_code}")
             return []
+            
+    # ADDED: Specific timeout error handling
+    except requests.exceptions.Timeout:
+        print("⚠️ YouTube API timed out. Moving on without videos...")
+        return []
     except Exception as e:
         print(f"⚠️ Failed to fetch YouTube videos: {e}")
         return []
@@ -57,7 +63,8 @@ def fetch_open_library_books(topic):
     }
 
     try:
-        response = requests.get(url, params=params)
+        # ADDED: timeout=5 prevents the app from hanging if Open Library lags
+        response = requests.get(url, params=params, timeout=5)
         if response.status_code == 200:
             data = response.json()
             book_list = []
@@ -75,6 +82,11 @@ def fetch_open_library_books(topic):
         else:
             print(f"⚠️ Open Library Error: Status {response.status_code}")
             return []
+            
+    # ADDED: Specific timeout error handling
+    except requests.exceptions.Timeout:
+        print("⚠️ Open Library API timed out. Moving on without books...")
+        return []
     except Exception as e:
         print(f"⚠️ Failed to fetch Open Library books: {e}")
         return []
